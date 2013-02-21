@@ -33,8 +33,10 @@ def array2d(width,height)
   result
 end
 
+# @matrix of cell structs
+@m
+
 def string_compare(s,t)
-  # @matrix of cell structs
   @m = array2d(s.length,t.length)
   opt = []
   for i in 1..s.length
@@ -62,4 +64,39 @@ def match(a,b)
   a == b ? 0 : 1
 end
 
-print string_compare(gets.chomp,gets.chomp)
+def reconstruct_path(s,t,i,j)
+  if @m[i][j].parent == -1
+    return
+  end
+  if @m[i][j].parent == Ops::MATCH
+    reconstruct_path(s,t,i-1,j-1)
+    match_out(s,t,i,j)
+  end
+  if @m[i][j].parent == Ops::INSERT
+    reconstruct_path(s,t,i,j-1)
+    insert_out(t,j)
+  end
+  if @m[i][j].parent == Ops::DELETE
+    reconstruct_path(s,t,i-1,j)
+    delete_out(s,i)
+  end
+end
+def match_out(s,t,i,j)
+  if s[i] == t[j] 
+    print 'M'
+  else
+    print 'S'
+  end
+end
+def insert_out(t,j)
+  print "I"
+end
+def delete_out(s,i)
+  print "D"
+end
+
+s = gets.chomp
+t = gets.chomp
+
+print string_compare(s,t).to_s + "\n"
+puts reconstruct_path(s,t,s.length,t.length)
